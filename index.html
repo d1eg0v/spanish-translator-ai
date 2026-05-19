@@ -477,7 +477,21 @@
             <h3>📥 Recibe la Guía en tu Email</h3>
             <p>También te avisaré cuando abra el curso completo. Cancelas cuando quieras.</p>
             
-            <form id="signup-form">
+            <form id="signup-form" action="https://formsubmit.co/ekko-outreach@agentmail.to" method="POST">
+                <input type="hidden" name="_subject" value="Nuevo registro waitlist - Spanish Translator AI Training">
+                <input type="hidden" name="_template" value="table">
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_next" value="https://d1eg0v.github.io/spanish-translator-ai/Como-Prosperar-Traductor-Era-IA.pdf">
+                <input type="hidden" name="course_waitlist" value="Spanish Translator AI Training">
+                <input type="hidden" name="lead_magnet" value="Cómo Prosperar como Traductor en la Era de la IA">
+                <input type="hidden" name="pdf_url" value="https://d1eg0v.github.io/spanish-translator-ai/Como-Prosperar-Traductor-Era-IA.pdf">
+                <input type="hidden" name="tracking_page" id="tracking_page">
+                <input type="hidden" name="tracking_source" id="tracking_source">
+                <input type="hidden" name="tracking_medium" id="tracking_medium">
+                <input type="hidden" name="tracking_campaign" id="tracking_campaign">
+                <input type="hidden" name="tracking_referrer" id="tracking_referrer">
+                <input type="hidden" name="submitted_at" id="submitted_at">
+                <input type="hidden" name="message" value="Nuevo suscriptor para la guía gratuita y lista de espera del curso Spanish Translator AI Training.">
                 <div class="form-group">
                     <input type="text" name="name" class="form-input" placeholder="Tu nombre" required>
                 </div>
@@ -564,9 +578,6 @@
 </footer>
 
 <script>
-const FORM_ENDPOINT = 'https://formsubmit.co/ajax/ekko-outreach@agentmail.to';
-const PDF_URL = './Como-Prosperar-Traductor-Era-IA.pdf';
-
 function getTrackingPayload() {
     const params = new URLSearchParams(window.location.search);
     return {
@@ -579,73 +590,20 @@ function getTrackingPayload() {
     };
 }
 
-document.getElementById('signup-form').addEventListener('submit', async function(e) {
-    e.preventDefault();
-
-    const btn = document.getElementById('submit-btn');
-    const errorEl = document.getElementById('form-error');
-    const successEl = document.getElementById('form-success');
-    const formData = new FormData(this);
+document.getElementById('signup-form').addEventListener('submit', function() {
     const tracking = getTrackingPayload();
+    document.getElementById('tracking_page').value = tracking.page;
+    document.getElementById('tracking_source').value = tracking.source;
+    document.getElementById('tracking_medium').value = tracking.medium;
+    document.getElementById('tracking_campaign').value = tracking.campaign;
+    document.getElementById('tracking_referrer').value = tracking.referrer;
+    document.getElementById('submitted_at').value = tracking.submitted_at;
 
-    btn.disabled = true;
-    btn.textContent = 'Enviando...';
-    errorEl.classList.remove('show');
-    successEl.classList.remove('show');
-
-    try {
-        const payload = {
-            name: formData.get('name'),
-            email: formData.get('email'),
-            _subject: 'Nuevo registro waitlist - Spanish Translator AI Training',
-            _template: 'table',
-            _captcha: 'false',
-            course_waitlist: 'Spanish Translator AI Training',
-            lead_magnet: 'Cómo Prosperar como Traductor en la Era de la IA',
-            pdf_url: new URL(PDF_URL, window.location.href).href,
-            tracking_page: tracking.page,
-            tracking_source: tracking.source,
-            tracking_medium: tracking.medium,
-            tracking_campaign: tracking.campaign,
-            tracking_referrer: tracking.referrer,
-            submitted_at: tracking.submitted_at,
-            message: 'Nuevo suscriptor para la guía gratuita y lista de espera del curso Spanish Translator AI Training.'
-        };
-
-        const response = await fetch(FORM_ENDPOINT, {
-            method: 'POST',
-            body: JSON.stringify(payload),
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'signup', {
+            event_category: 'lead_magnet',
+            event_label: 'spanish_translator_ai_training'
         });
-
-        const result = await response.json();
-        if (!response.ok || !result.success) {
-            throw new Error(result.message || 'No se pudo registrar el email');
-        }
-
-        successEl.innerHTML = '✅ <strong>¡Listo!</strong> Estás en la lista de espera. La guía se abrirá ahora en una pestaña nueva.';
-        successEl.classList.add('show');
-        this.reset();
-
-        if (typeof gtag !== 'undefined') {
-            gtag('event', 'signup', {
-                event_category: 'lead_magnet',
-                event_label: 'spanish_translator_ai_training'
-            });
-        }
-
-        setTimeout(() => {
-            window.open(PDF_URL, '_blank');
-        }, 900);
-    } catch (err) {
-        errorEl.textContent = 'Error: ' + err.message + '. Puedes escribir a ekko-outreach@agentmail.to y pedir la guía “Cómo Prosperar como Traductor en la Era de la IA”.';
-        errorEl.classList.add('show');
-    } finally {
-        btn.disabled = false;
-        btn.textContent = 'Descargar Guía Gratuita';
     }
 });
 
